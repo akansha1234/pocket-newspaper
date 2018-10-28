@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>
+		News App
+	</title>
+	<meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+h1 {
+  margin: 0;
+}
+
+.typing-text::after {
+  content: "|";
+  animation: blink ease 1s infinite;
+}
+
+@keyframes blink {
+  0%, 100% {
+    opacity: 0;
+  } 50% {
+    opacity: 1;
+  }
+}
+.bg1{
+	background-color: black;
+	color: white;
+	padding:20px;
+	width:100%;
+}
+.bg2{
+  margin-top: 89px;
+}
+#submitButton{
+	font-size: 20px;
+	padding:px;
+	color: white;
+	background-color: black;
+}
+button::after{
+	border:1px solid black;
+}
+#topic{
+	font-size: 20px;
+	border:1px solid black;
+}
+</style>
+</head>
+<body>
+<div class="container text-center bg1">
+<h1 class="typing-text" ></h1>
+</div>
+<div class="container text-center bg2">
+<h2>Enter your topic</h2>
+<input type="text" name="topic name" id="topic">
+<button type="button" class="btn btn-lg" id="submitButton">Submit</button>
+</div>
+<script>
+// get the element
+const text = document.querySelector('.typing-text');
+
+// make a words array
+const words = [
+  "POCKET NEWSPAPER",
+  "GET THE NEWS",
+  "ANYTIME",
+  "ANYWHERE"
+];
+
+// start typing effect
+setTyper(text, words);
+
+function setTyper(element, words) {
+
+  const LETTER_TYPE_DELAY = 75;
+  const WORD_STAY_DELAY = 2000;
+
+  const DIRECTION_FORWARDS = 0;
+  const DIRECTION_BACKWARDS = 1;
+
+  var direction = DIRECTION_FORWARDS;
+  var wordIndex = 0;
+  var letterIndex = 0;
+
+  var wordTypeInterval;
+
+  startTyping();
+
+  function startTyping() {
+    wordTypeInterval = setInterval(typeLetter, LETTER_TYPE_DELAY);
+  }
+
+  function typeLetter() {
+    const word = words[wordIndex];
+
+    if (direction == DIRECTION_FORWARDS) {
+      letterIndex++;
+
+      if (letterIndex == word.length) {
+        direction = DIRECTION_BACKWARDS;
+        clearInterval(wordTypeInterval);
+        setTimeout(startTyping, WORD_STAY_DELAY);
+      }
+
+    } else if (direction == DIRECTION_BACKWARDS) {
+      letterIndex--;
+
+      if (letterIndex == 0) {
+        nextWord();
+      }
+    }
+
+    const textToType = word.substring(0, letterIndex);
+
+    element.textContent = textToType;
+  }
+
+  function nextWord() {
+
+    letterIndex = 0;
+    direction = DIRECTION_FORWARDS;
+    wordIndex++;
+
+    if (wordIndex == words.length) {
+      wordIndex = 0;
+    }
+
+  }
+}
+
+$(document).ready(function(){
+	$("#submitButton").click(function(){
+		var topic=$("#topic").val();
+		if(topic!=""){
+var xhr = new XMLHttpRequest();
+xhr.open("GET",'https:newsapi.org/v2/everything?q='+topic+"&apiKey=c33a813718dd4c2faf411c68bebb7905",true);
+xhr.send();
+xhr.onreadystatechange=function(){
+	if(xhr.readyState==4&&xhr.status==200){
+		 var w = JSON.parse(xhr.responseText);
+document.write("<p><strong>The Description is</strong>:"+w.articles[9].description+"<br>"+"<p><strong>For more details:</strong>"+w.articles[9].url+"<p><strong>Content:</strong>"+w.articles[9].content);
+}
+	};
+}
+});
+});
+
+</script>
+</body>
+</html>
